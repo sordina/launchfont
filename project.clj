@@ -1,5 +1,5 @@
-(defproject launchpad "1.3.0"
-  :main launchpad.core
+(defproject launchpad-bitmap-record "1.3.0"
+  :main launchpad-bitmap-record.core
   :description "Conway's Game of Life on the Novation Launchpad"
   :dependencies [ [org.clojure/clojure    "1.3.0"  ]
                   [matchure               "0.10.1" ]

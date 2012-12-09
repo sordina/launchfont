@@ -1,9 +1,12 @@
-(ns launchpad.core (:gen-class :main true))
+(ns launchpad-bitmap-record.core (:gen-class :main true))
 
 ; Includes
 (use 'midi)
 (use 'matchure)
 (use 'seesaw.core)
+
+; Declarations
+(declare main serialize clear-device exit trues cell-toggle central side switch stop-button handle-events neighbours set-cell glider handler bound getZ clear-device render newstate alive? cell-on cell-off cell-to-note note-to-cell)
 
 ; Constants
 (def coords        (for [x (range 0 8) y (range 0 8)] [x y]))
@@ -11,24 +14,20 @@
 (def keyboard      (midi-in  "Launchpad"))
 (def state         (atom {}))
 (def side-bindings (atom {}))
-(def playing       (atom false))
-(def running       (atom true))
-(def speed         (atom 100))
 
-(defn exit [&args] (reset! running false))
+(defn flush-file [] (prn (trues @state)))
+
+(defn exit [&args] (do (clear-device) (System/exit 0)))
 
 (native!)
 
-(def life-window   (frame  :title    "Conway's Game of Life on the Novation Launchpad"
+(def life-window   (frame  :title    "Novation Launchpad Bitmap Recorder"
                            :on-close :exit))
 
 (def life-button   (button :text  "Exit"))
 
 (config! life-window :content life-button)
 (listen  life-button :action  exit)
-
-; Declarations
-(declare main cell-toggle central side switch stop-button handle-events neighbours set-cell glider handler bound curry getZ clear-device step render newstate alive? cell-on cell-off cell-to-note note-to-cell)
 
 (defn -main [] (main))
 
@@ -37,11 +36,7 @@
                   (config! life-window :size [500 :by 100])
                   (handle-events)
                   (clear-device)
-                  (glider)
-                  (while @running (if @playing (step @state))
-                                  (Thread/sleep @speed)))
-                  (clear-device)
-                  (System/exit 0))
+                  (Thread/sleep 1000000000000))) ; TODO - Use a blocker instead
 
 ; Library
 
@@ -58,15 +53,10 @@
 
 (defn bind-button [xy f] (cell-on xy) [xy f])
 
-(defn slower [x] (* 1.4 x))
-
-(defn faster [x] (* 0.8 x))
-
 (defn setup-side-bindings [] (reset! side-bindings (apply hash-map (apply concat
-  [(bind-button [8 0] #(reset! running false))
-   (bind-button [8 4] #(swap!  playing not))
-   (bind-button [8 5] #(swap!  speed faster))
-   (bind-button [8 6] #(swap!  speed slower))]))))
+  [(bind-button [8 4] #(exit))
+   (bind-button [8 5] #(flush-file))
+   ]))))
 
 (defn side [xy] ((@side-bindings xy)))
 
@@ -80,19 +70,7 @@
     (cond (< 0 (bit-and          on-now (bit-not on-next))) (cell-off xy)
           (< 0 (bit-and (bit-not on-now)         on-next )) (cell-on  xy))))
 
-(defn neighbours [m xy]
-  (let [ [x y]    xy
-         d        [-1 0 1]
-         ncoords  (for [dx d dy d] [(bound (+ x dx)) (bound (+ y dy))]) ]
-   (map (curry getZ m) ncoords)))
-
 (defn bound [a] (mod a 8))
-
-(defn-match alive? ([0  3] 1)
-                   ([0  _] 0)
-                   ([1  3] 1)
-                   ([1  4] 1)
-                   ([1  _] 0))
 
 (defn cell-on     [xy] (do (set-cell xy 1) (midi-note-on  lights (cell-to-note xy) 127)))
 (defn cell-off    [xy] (do (set-cell xy 0) (midi-note-off lights (cell-to-note xy))))
@@ -104,17 +82,13 @@
 (defn clear-device [] (do (doseq [xy coords] (cell-off xy)))
                           (setup-side-bindings))
 
-(defn glider [] (do (cell-on [4 4])
-                    (cell-on [5 4])
-                    (cell-on [6 4])
-                    (cell-on [6 3])
-                    (cell-on [5 2])))
-
 (defn cell-to-note [xy] (let [[x y] xy] (+ x (* y 16))))
 
 (defn note-to-cell [n ] [(mod n 16) (quot n 16)])
 
 (defn getZ [m k] (let [v (m k)] (cond (nil? v) 0 :else v)))
 
-; Combinators
-(defn curry [f a] (fn [x] (f a x)))
+(defn trues
+  "Find true keys in a map"
+  [m]
+  (filter #(= 1 (m %)) (keys m)))
