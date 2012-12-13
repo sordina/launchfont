@@ -1,28 +1,18 @@
-# Conway's [Game of Life](http://en.wikipedia.org/wiki/Conway's_Game_of_Life) on the Novation Launchpad
+# A Font-Capture Program for the Novation Launchpad
 
-[Demo on Youtube](http://www.youtube.com/watch?v=U3m2rWUn3yA)
+[Demo on Youtube](http://youtu.be/D9Bb6UXIvGA)
 
-<img src="https://raw.github.com/sordina/launchpad/master/images/launchpad-life.png" alt="Life on the Launchpad" />
+<img src="https://raw.github.com/sordina/launchpad/master/images/launchfont.png" alt="Font recording on the Novation Launchpad" />
 
-A stand-alone Jar package is available in the [downloads](https://github.com/sordina/launchpad/downloads) section.
+A stand-alone Jar package is available in the [downloads](https://github.com/sordina/launchfont/downloads) section.
 
 The Launchpad must be plugged in before starting the app.
 
 ## Controls
 
-The center 64 buttons can be pressed to flip the state of a cell.
+The center 64 buttons can be pressed to flip the state of a cell used for a font.
 
 ### Side-Buttons
 
-    'stop'   - Pauses and unpauses the game
-    'trk on' - Speeds up the game
-    'solo'   - Slows down the game
-    'vol'    - Exit the program
-
-## Notes
-
-BEWARE...
-
-This is an extremely poorly written program, constructed as a proof of concept and an
-excuse to write some Clojure. If you have any feedback about best practices I will be
-more than happy to hear it!
+    'stop'   - Quit
+    'trk on' - Output the current character to STDOUT
