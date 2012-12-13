@@ -2,7 +2,7 @@
 
 [Demo on Youtube](http://youtu.be/D9Bb6UXIvGA)
 
-<img src="https://raw.github.com/sordina/launchpad/master/images/launchfont.png" alt="Font recording on the Novation Launchpad" />
+<img src="https://raw.github.com/sordina/launchfont/master/images/launchfont.png" alt="Font recording on the Novation Launchpad" />
 
 A stand-alone Jar package is available in the [downloads](https://github.com/sordina/launchfont/downloads) section.
 
